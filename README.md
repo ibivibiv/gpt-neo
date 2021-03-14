@@ -16,6 +16,65 @@ Also included are alternative model architectures and linear attention implement
 
 Pretrained models will be released as they are finished training.
 
+
+# Setup for NVidia GPUS on Ubuntu
+
+There are several steps that need to be followed to untangle setting up a proper mesh configuration and memory limits for using the TPU  models expressed in the majority of the documentation.  The examples are mostly geared towards using Google Cloud TPU modules.  I successfully have gotten a decent model training on NVidia GPUs on a server.  It involves mostly installing the correct Python, Cuda, and cudnn versions.  After that you must set your config for the model training to have the right mesh config and bring some of the values into tolerance for the available memory in your setup.  I'll document what I did for this version here:
+
+<i>STARTING WITH A MINIMAL UBUNTU 18.04</i>
+
+## Python 
+I took python from 3.6.x to 3.8 first by doing the following:
+
+* sudo apt-get install software-properties-common
+* sudo add-apt-repository ppa:deadsnakes/ppa
+* sudo apt-get update
+* sudo apt-get install python3.8
+* sudo update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.6 1
+* sudo update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.8 2
+* sudo update-alternatives --config python3
+-- at this point you select "2"
+
+## Cuda
+I downloaded this script to install Cuda 11
+* sudo apt-get install git
+* sudo git clone https://github.com/DataCrunch-Scripts/Install-CUDA.git ~/Install-CUDA
+* sudo chmod +x ~/Install-CUDA/installer.sh
+* sudo ~/Install-CUDA/installer.sh
+* reboot your system
+* check that your system is seeing the GPU's by executing "nvidia-smi"
+
+## Cudnn
+* tar -xzvf cudnn-11.2-linux-x64-v8.1.1.33.tgz
+* cp cuda/include/cudnn*.h /usr/local/cuda/include
+* cp cuda/lib64/libcudnn* /usr/local/cuda/lib64
+* chmod a+r /usr/local/cuda/include/cudnn*.h /usr/local/cuda/lib64/libcudnn*
+* dpkg -i ../libcudnn8_8.0.5.39-1+cuda11.0_amd64.deb
+
+
+## Tensorflow
+* python3 -m pip install tensorflow-gpu
+
+
+The I ran the following quick python script to ensure I had Python, Cuda, Cudnn, and Tensorflow all working:
+
+<i>
+from tensorflow.python.client import device_lib
+
+def get_available_gpus():
+    local_device_protos = device_lib.list_local_devices()
+    return [x.name for x in local_device_protos if x.device_type == 'GPU']
+
+print(get_available_gpus())
+</i>
+
+## GPTNeo
+* git clone https://github.com/EleutherAI/GPTNeo
+* cd GPTNeo
+* pip3 install -r requirements.txt
+
+
+
 # Setup
 
 ```bash
