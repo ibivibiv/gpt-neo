@@ -213,9 +213,7 @@ def mlm_sample_text(params, x, random_documents = False):
 def pred_input(params, logger, enc=None,
                path_to_prompt=""):
 
-    unicorns = "In a shocking finding, scientists discovered a herd of unicorns living in a remote, " \
-               "previously unexplored valley, in the Andes Mountains. Even more surprising to the " \
-               "researchers was the fact that the unicorns spoke perfect English."
+    unicorns = 'There is a great deal of debate about the existence of God.  Many people believe in their faith while others question it or outright reject the idea. During a discussion on logic and theology a professor said: "All statements that include the word God are false." Is the professor right or wrong?'
 
     text = unicorns if path_to_prompt == "" else open(path_to_prompt, "r").read()
     tokens = encode(enc, text)
