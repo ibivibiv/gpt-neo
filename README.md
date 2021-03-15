@@ -33,23 +33,25 @@ I took python from 3.6.x to 3.8 first by doing the following:
 * sudo update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.6 1
 * sudo update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.8 2
 * sudo update-alternatives --config python3
--- at this point you select "2"
+* at this point you select "2" or you can just use default if it has change 3.8 to the default
+* apt-get install python3-pip
+* pip install --upgrade pip
+* upgrading pip is important because things like tensorflow-mesh aren't there in early versions of pip
 
 ## Cuda
-I downloaded this script to install Cuda 11
+I downloaded this script to install Cuda 11 but its also here in the repo to use
 * sudo apt-get install git
 * sudo git clone https://github.com/DataCrunch-Scripts/Install-CUDA.git ~/Install-CUDA
+* select version 11
 * sudo chmod +x ~/Install-CUDA/installer.sh
 * sudo ~/Install-CUDA/installer.sh
 * reboot your system
 * check that your system is seeing the GPU's by executing "nvidia-smi"
 
 ## Cudnn
-* tar -xzvf cudnn-11.2-linux-x64-v8.1.1.33.tgz
-* cp cuda/include/cudnn*.h /usr/local/cuda/include
-* cp cuda/lib64/libcudnn* /usr/local/cuda/lib64
-* chmod a+r /usr/local/cuda/include/cudnn*.h /usr/local/cuda/lib64/libcudnn*
-* dpkg -i ../libcudnn8_8.0.5.39-1+cuda11.0_amd64.deb
+* wget https://developer.download.nvidia.com/compute/cuda/repos/ubuntu1804/x86_64/libcudnn8_8.0.5.39-1+cuda11.0_amd64.deb
+* chmod a+x libcudnn8_8.0.5.39-1+cuda11.0_amd64.deb
+* dpkg -i libcudnn8_8.0.5.39-1+cuda11.0_amd64.deb
 
 
 ## Tensorflow
@@ -59,13 +61,13 @@ I downloaded this script to install Cuda 11
 The I ran the following quick python script to ensure I had Python, Cuda, Cudnn, and Tensorflow all working:
 
 <i>
-from tensorflow.python.client import device_lib
-
-def get_available_gpus():
-    local_device_protos = device_lib.list_local_devices()
-    return [x.name for x in local_device_protos if x.device_type == 'GPU']
-
-print(get_available_gpus())
+from tensorflow.python.client import device_lib <br/>
+<br/>
+def get_available_gpus():<br/>
+    local_device_protos = device_lib.list_local_devices()<br/>
+    return [x.name for x in local_device_protos if x.device_type == 'GPU']<br/>
+<br/>
+print(get_available_gpus())<br/>
 </i>
 
 ## GPTNeo
@@ -74,71 +76,7 @@ print(get_available_gpus())
 * pip3 install -r requirements.txt
 
 
-
-# Setup
-
-```bash
-git clone https://github.com/EleutherAI/GPTNeo
-cd GPTNeo
-pip3 install -r requirements.txt
-```
-# Training Setup
-
-## TPUs:
-
-Sign up for [Google Cloud Platform](https://cloud.google.com/), and create a [storage bucket](https://cloud.google.com/storage). 
-
-Create your VM through a google shell (`https://ssh.cloud.google.com/`) with `ctpu up --vm-only` so that it can connect to your Google bucket and TPUs and install the requirements with pip (see above).
-
-Then run through our [Training Guide](https://github.com/EleutherAI/GPTNeo#training-guide) below.
-
-## GPUs:
-
-You can also choose to train GPTNeo locally on your GPUs. To do so, you can omit the Google cloud setup steps above, and git clone the repo locally. Run through the [Training Guide](https://github.com/EleutherAI/GPTNeo#training-guide) below, then when running main.py, you simply have to omit the `tpu` flag, and pass in GPU ids instead. 
-
-# Colab:
-
-[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/EleutherAI/GPTNeo/blob/master/GPTNeo_example_notebook.ipynb)
-
-Google colab provides tpu-v8s for free, which should be enough to finetune our models up to GPT3XL (1.5B parameter) sizes.
-Click the above button to run through our example colab notebook.
-
-# Downloading Pretrained Models
-
-TODO
-
-# Generating Text
-
-Once you have a trained model, or you've downloaded one of our pre-trained models (coming soon), generating text is as simple as running the main.py script with the `--predict` flag on. You can pass a path to your prompt txt file with the `--prompt` flag, like so:
-
-```bash
-python3 main.py --predict --prompt <example_prompt.txt> --tpu <tpu_name> --model <config_name>
-```
-
-or, if using GPUs:
-
-```bash
-python3 main.py --predict --prompt <example_prompt.txt> --gpu_ids <device:GPU:0 device:GPU:1> --model <config_name>
-```
-
-# Training Guide
-
-## 1. Create your Tokenizer (OPTIONAL)
-
-We recommend you use [Huggingface's pretrained GPT2 tokenizer](https://huggingface.co/transformers/model_doc/gpt2.html#transformers.GPT2Tokenizer) with our repo (instructions provided below), but if you want to train a model with a different vocabulary size, we provide facilities to train your own tokenizer like so:
-
-```bash
-python data/train_tokenizer.py \
-    --base_dir ./path/to/your/txt/files \
-    --output_dir ./output/path \
-    --file_type txt \
-    --vocab_size 50257
-
-# if it succeeded, you should see the message
-# 'tokenizer saved at ./output/path/byte-level-bpe.tokenizer.json'
-```
-
-## 2. Tokenizing your Dataset
+## Tokenizing your Dataset
 
 If you just want to test training, you can skip this step and download some dummy data like so:
 
@@ -260,17 +198,14 @@ All you need to do is edit the dataset id as described above, and edit `model_pa
 ## 6. Run Training
 
 ```
-python3 main.py --model <your_config_name> --steps_per_checkpoint <n> --tpu <tpu-name>
+python3 main.py --model <your_config_name> --steps_per_checkpoint <n> --gpu_ids <device:GPU:0 device:GPU:1>
 ```
 
-- `tpu`: Name of the TPU to use.
+
 - `steps_per_checkpoint`: The frequency in steps at which to save checkpoints.
 - `--auto_layout` and `--auto_layout_and_mesh_shape` (Optional): Disable training and instead auto generate a memory efficient `layout` (and `mesh_shape`)
 - `gpu_ids`: if training using GPUs, omit the `tpu` flag and pass in the ids of your gpus. In the example below, we train on 3 GPUs, specifying their device ids delimited by spaces:
 
-```
-python3 main.py --model <your_config_name> --steps_per_checkpoint <n> --gpu_ids <device:GPU:0 device:GPU:1>
-```
 
 # Available Configs
 
@@ -354,7 +289,7 @@ Pick a valid config from `/configs` and tweak the parameters as needed:
     + `sampling_mode`: `chunks` (tfrecords are preprocessed into the correct length and are read sequentially) or `documents_random` (`stitch` amount of documents are concatenated and then a `n_ctx` chunk is randomly subsampled)
     + `weights`: How much relative weight this dataset should have compared to others
 - `model`: Which model to train. Currently only `GPT` is supported, and it defaults to this if not present.
-- `model_path`: Google storage bucket location (or local path, if using GPUs) to save model checkpoints and logs.
+- `model_path`: local path, if using GPUs to save model checkpoints and logs.
 - `n_ctx`: Size of context window. Default is 2048
 - `n_layer`: Number of layers (blocks) in the model.
 - `scale_by_depth`: If true, the weight initialization of layers are scaled by their depth as in the GPT2 paper.
