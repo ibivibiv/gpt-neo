@@ -1,0 +1,9 @@
+{
+  "path": "gs://train_gpt3_openwebtext_myresults/datasets/openwebtext/open*.tfrecords",
+  "eval_path": "",
+  "n_vocab": 50256,
+  "tokenizer_is_pretrained": true,
+  "tokenizer_path": "gpt2",
+  "eos_id": 50256,
+  "padding_id": 50257
+}
