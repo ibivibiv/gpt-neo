@@ -42,9 +42,10 @@ I took python from 3.6.x to 3.8 first by doing the following:
 I downloaded this script to install Cuda 11 but its also here in the repo to use
 * sudo apt-get install git
 * sudo git clone https://github.com/DataCrunch-Scripts/Install-CUDA.git ~/Install-CUDA
+* cd Install-Cuda
+* chmod a+x ./installer.sh
+* ./installer.sh
 * select version 11
-* sudo chmod +x ~/Install-CUDA/installer.sh
-* sudo ~/Install-CUDA/installer.sh
 * reboot your system
 * check that your system is seeing the GPU's by executing "nvidia-smi"
 
