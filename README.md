@@ -76,6 +76,16 @@ print(get_available_gpus())<br/>
 * pip3 install -r requirements.txt
 
 
+
+## Command
+
+Then I used this command to train:
+
+nohup python3 main.py --model colab_XL --steps_per_checkpoint 500 --gpu_ids device:GPU:0 &
+
+
+
+
 ## Tokenizing your Dataset
 
 If you just want to test training, you can skip this step and download some dummy data like so:
