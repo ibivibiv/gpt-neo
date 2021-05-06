@@ -23,6 +23,13 @@ There are several steps that need to be followed to untangle setting up a proper
 
 <i>STARTING WITH A MINIMAL UBUNTU 18.04</i>
 
+## Nvidia Graphics Card
+You might need to first make sure the graphics card is working.  The following will help get the right driver in place:
+* apt-get install ubuntu-drivers-common
+* ubuntu-drivers devices
+* select and install recommended driver
+* run nvidia-smi to be sure its working
+
 ## Python 
 I took python from 3.6.x to 3.8 first by doing the following:
 
