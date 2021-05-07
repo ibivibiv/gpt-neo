@@ -33,15 +33,15 @@ You might need to first make sure the graphics card is working.  The following w
 ## Python 
 I took python from 3.6.x to 3.8 first by doing the following:
 
-* sudo apt-get install software-properties-common
+* sudo apt-get install -y software-properties-common 
 * sudo add-apt-repository ppa:deadsnakes/ppa
 * sudo apt-get update
-* sudo apt-get install python3.8
+* sudo apt-get install -y python3.8
 * sudo update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.6 1
 * sudo update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.8 2
 * sudo update-alternatives --config python3
 * at this point you select "2" or you can just use default if it has change 3.8 to the default
-* apt-get install python3-pip
+* apt-get install -y python3-pip
 * pip3 install --upgrade pip
 * upgrading pip is important because things like tensorflow-mesh aren't there in early versions of pip
 
